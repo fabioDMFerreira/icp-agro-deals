@@ -1,30 +1,16 @@
 import { useState } from 'react';
 import { icp_agro_deals_backend } from 'declarations/icp_agro_deals_backend';
+import DealCard from './components/DealCard';
 
 function App() {
-  const [greeting, setGreeting] = useState('');
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    icp_agro_deals_backend.greet(name).then((greeting) => {
-      setGreeting(greeting);
-    });
-    return false;
-  }
 
   return (
-    <main>
-      <img src="/logo2.svg" alt="DFINITY logo" />
-      <br />
-      <br />
-      <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
-      </form>
-      <section id="greeting">{greeting}</section>
+    <main className="max-container padding-container flex flex-col">
+      <div className="relative z-20 flex flex-1 flex-col items-center pt-6">
+        <DealCard code="080610" title="Peru - Fresh Grapes" price="2.3" description="Fresh Red Globe grapes from Peru."/>
+      </div>
     </main>
+
   );
 }
 
