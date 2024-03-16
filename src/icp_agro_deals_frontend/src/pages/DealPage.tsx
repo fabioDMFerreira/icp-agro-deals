@@ -1,9 +1,7 @@
-import { useState } from 'react';
-import { icp_agro_deals_backend } from 'declarations/icp_agro_deals_backend';
-import DealCard from './components/DealCard';
-import DealFunding from './components/DealFunding';
+import DealCard from "../components/DealCard";
+import DealFunding from "../components/DealFunding";
 
-function App() {
+const DealPage = () => {
   const hsCode = "080610";
   const productName = "Peru - Fresh Grapes";
   const productDescription = "Fresh Red Globe grapes from Peru.";
@@ -96,8 +94,7 @@ function App() {
         />
       </div>
     </main>
-
   );
 }
 
-export default App;
+export default DealPage

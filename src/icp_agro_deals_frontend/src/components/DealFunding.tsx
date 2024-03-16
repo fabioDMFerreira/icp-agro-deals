@@ -1,5 +1,11 @@
 import ProgressBar from "./ProgressBar";
 
+type DealFundingMilestone= {
+  label: string;
+  location?: string;
+  date: string;
+}
+
 type DealFundingProperties = {
   progressPercentage: number;
   finalCall: string;
@@ -13,7 +19,7 @@ type DealFundingProperties = {
   productName: string;
   origin: string;
   destination: string;
-  milestones: string[];
+  milestones: DealFundingMilestone[];
 }
 
 const DealFunding = ({progressPercentage, finalCall, contractAmount, contractId, fundedAmount, duration, profit, risk, supplierMessage, productName, origin, destination, milestones}: DealFundingProperties) => {
