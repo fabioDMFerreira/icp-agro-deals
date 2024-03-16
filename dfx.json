@@ -4,10 +4,6 @@
       "main": "src/icp_agro_deals_backend/dealsManager.mo",
       "type": "motoko"
     },
-    "icp_agro_deals_log": {
-      "main": "src/icp_agro_deals_backend/dealsLog.mo",
-      "type": "motoko"
-    },
     "icp_agro_deals_frontend": {
       "dependencies": [
         "icp_agro_deals_backend"
