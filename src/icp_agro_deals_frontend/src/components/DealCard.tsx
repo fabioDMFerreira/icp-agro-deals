@@ -34,7 +34,7 @@ const copyToClipboard = async (text: string) => {
 
 const DealCard = ({code, title, price, description, features, prices}: DealCardProperties) => {
   return (
-    <div className="min-w-[600px] rounded-md overflow-hidden shadow-lg p-4 bg-white border">
+    <div className="lg:min-w-[600px] rounded-md shadow-lg p-4 bg-white border">
       <div className="flex items-center space-x-1">
         <p className="text-sm">HS Code: {code}</p>
         <ContentCopyIcon onClick={() => copyToClipboard(code)} className="text-lime-400 hover:text-lime-500 cursor-pointer" style={{ fontSize: 15 }} />

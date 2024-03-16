@@ -1,8 +1,61 @@
 import { useState } from 'react';
 import { icp_agro_deals_backend } from 'declarations/icp_agro_deals_backend';
 import DealCard from './components/DealCard';
+import DealFunding from './components/DealFunding';
 
 function App() {
+  const hsCode = "080610";
+  const productName = "Peru - Fresh Grapes";
+  const productDescription = "Fresh Red Globe grapes from Peru.";
+  const price = "2.3";
+  const progressPercentage=100;
+  const finalCall="03/11/2023";
+  const contractAmount="$90000 USD";
+  const contractId="27102023-00010";
+  const fundedAmount="$90000 USD";
+  const duration="4 weeks";
+  const profit="20%";
+  const risk="A";
+  const supplierMessage="consignee: xxxx";
+  const origin="Callao, Peru";
+  const destination="Lisbon, Portugal";
+  
+  const milestones=[
+    {
+      label: "Production",
+      location: "Callao, Peru",
+      date: "27/10/2023"
+    },
+    {
+      label: "Packing house",
+      location: "Callao, Peru",
+      date: "28/10/2023"
+    },
+    {
+      label: "Finished product",
+      location: "Callao, Peru",
+      date: "29/10/2023"
+    },
+    {
+      label: "Port of loading",
+      location: "Callao, Peru",
+      date: "29/10/2023"
+    },
+    {
+      label: "Transit",
+      date: "30/10/2023"
+    },
+    {
+      label: "Port of destination",
+      location: "Lisbon, Portugal",
+      date: "15/11/2023"
+    },
+    {
+      label: "Arrival",
+      location: "Lisbon, Portugal",
+      date: "17/11/2023"
+    },
+  ];
 
   const dealFeatures = [
     { label: 'Presentations:', values: ['8.2 Kg carton'] },
@@ -16,9 +69,31 @@ function App() {
   ]
 
   return (
-    <main className="max-container padding-container flex flex-col">
-      <div className="relative z-20 flex flex-1 flex-col items-center pt-6">
-        <DealCard code="080610" title="Peru - Fresh Grapes" price="2.3" description="Fresh Red Globe grapes from Peru." features={dealFeatures} prices={dealPrices}/>
+    <main className="max-container padding-container flex flex-col items-center">
+      <div className="relative z-20 flex flex-1 space-x-10 pt-6">
+        <DealCard 
+          code={hsCode}
+          title={productName}
+          price={price}
+          description={productDescription}
+          features={dealFeatures}
+          prices={dealPrices}
+        />
+        <DealFunding 
+          progressPercentage={progressPercentage}
+          finalCall={finalCall}
+          contractAmount={contractAmount}
+          contractId={contractId}
+          fundedAmount={fundedAmount}
+          duration={duration}
+          profit={profit}
+          risk={risk}
+          supplierMessage={supplierMessage}
+          productName={productName}
+          origin={origin}
+          destination={destination}
+          milestones={milestones}
+        />
       </div>
     </main>
 
