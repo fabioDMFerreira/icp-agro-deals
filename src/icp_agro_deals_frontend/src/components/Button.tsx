@@ -4,7 +4,7 @@ type ButtonProps = {
 
 const Button = ({title}: ButtonProps) => {
   return (
-    <button className={"bg-lime-400 hover:bg-lime-700 text-white font-bold py-2 px-4 rounded"}>
+    <button className={"bg-lime-400 hover:bg-lime-700 text-white text-[18px] font-bold py-3 px-20 rounded-md"}>
       {title}
     </button>
   )
