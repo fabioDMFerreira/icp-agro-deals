@@ -1,10 +1,28 @@
 import DealCard from "../components/DealCard";
 import DealFunding from "../components/DealFunding";
+import {useParams } from 'react-router-dom';
+import { icp_agro_deals_backend } from 'declarations/icp_agro_deals_backend';
+import { Deal } from 'declarations/icp_agro_deals_backend/icp_agro_deals_backend.did';
+import { useEffect, useState } from "react";
 
 const DealPage = () => {
+  const [deal, setDeal] = useState<Deal>();
+  const [isLoading, setIsLoading] = useState(true);
+  const { dealId } = useParams();
+
+
+  useEffect(() => {
+    if (dealId) icp_agro_deals_backend
+      .get(BigInt(dealId))
+      .then((result: any) => {
+        setDeal(result.ok[0]);
+        setIsLoading(false);   
+      });
+  }, []);
+
   const hsCode = "080610";
-  const productName = "Peru - Fresh Grapes";
-  const productDescription = "Fresh Red Globe grapes from Peru.";
+  const productName = deal?.name || "";
+  const productDescription = deal?.description || "";
   const price = "2.3";
   const progressPercentage=100;
   const finalCall="03/11/2023";
@@ -69,29 +87,33 @@ const DealPage = () => {
   return (
     <main className="max-container padding-container flex flex-col items-center">
       <div className="relative z-20 flex flex-1 space-x-10 pt-6">
-        <DealCard 
-          code={hsCode}
-          title={productName}
-          price={price}
-          description={productDescription}
-          features={dealFeatures}
-          prices={dealPrices}
-        />
-        <DealFunding 
-          progressPercentage={progressPercentage}
-          finalCall={finalCall}
-          contractAmount={contractAmount}
-          contractId={contractId}
-          fundedAmount={fundedAmount}
-          duration={duration}
-          profit={profit}
-          risk={risk}
-          supplierMessage={supplierMessage}
-          productName={productName}
-          origin={origin}
-          destination={destination}
-          milestones={milestones}
-        />
+        {!isLoading &&
+          <>
+            <DealCard 
+              code={hsCode}
+              title={productName}
+              price={price}
+              description={productDescription}
+              features={dealFeatures}
+              prices={dealPrices}
+            />
+            <DealFunding 
+              progressPercentage={progressPercentage}
+              finalCall={finalCall}
+              contractAmount={contractAmount}
+              contractId={contractId}
+              fundedAmount={fundedAmount}
+              duration={duration}
+              profit={profit}
+              risk={risk}
+              supplierMessage={supplierMessage}
+              productName={productName}
+              origin={origin}
+              destination={destination}
+              milestones={milestones}
+            />
+          </>
+          }
       </div>
     </main>
   );
