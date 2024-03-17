@@ -23,6 +23,10 @@ function App() {
       });
   };
 
+  function deleteDeal(deal: Deal) {
+    icp_agro_deals_backend.delete(BigInt(deal.id));
+  }
+
   function createDeal() {
     const payload: CreateDealDTO = {
       destination: 'Lisbon, Portugal',

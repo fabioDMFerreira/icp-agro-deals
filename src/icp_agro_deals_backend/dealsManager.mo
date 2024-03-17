@@ -171,6 +171,24 @@ shared (installer) actor class DealsManager() {
     #ok();
   };
 
+  public func delete(dealId : Nat) : async Result.Result<(), Text> {
+    isOwner();
+
+    if (dealId >= next) {
+      return #err(indexOutOfBoundsErr);
+    };
+
+    switch (getDeal(dealId)) {
+      case null return #err(notFoundErr);
+      case (?deal) {
+        deleteDeal(dealId);
+        log(dealId, "deal removed");
+      };
+    };
+
+    #ok();
+  };
+
   public query func get(dealId : Nat) : async Result.Result<?Deal, Text> {
     if (dealId >= next) {
       return #err(indexOutOfBoundsErr);
@@ -232,6 +250,10 @@ shared (installer) actor class DealsManager() {
       Nat.equal,
       ?deal,
     ).0;
+  };
+
+  private func deleteDeal(x : DealId) : () {
+    deals := Trie.remove(deals, dealKey(x), Nat.equal).0;
   };
 
   private func getDeal(x : DealId) : ?Deal {
