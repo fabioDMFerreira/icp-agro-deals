@@ -1,99 +1,43 @@
-import { ReactHTMLElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { icp_agro_deals_backend } from 'declarations/icp_agro_deals_backend';
 import {
   CreateDealDTO,
   Deal,
 } from 'declarations/icp_agro_deals_backend/icp_agro_deals_backend.did';
 import DealPreview from './components/DealPreview';
+import CreateDealModal from './components/CreateDealModal';
+import Spinner from './components/Spinner';
 
 function App() {
   const [deals, setDeals] = useState<Deal[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
 
-  const refreshDeals = () => {
-    icp_agro_deals_backend.list(BigInt(0)).then((result: any) => {
-      setDeals(result.ok);
-    });
-  };
-
-  const changeStatus = (index: number, deal: Deal) => {
-    icp_agro_deals_backend
-      .changeStatus(BigInt(index), BigInt(+deal.status.toString() + 1))
-      .then((result: any) => {
-        setDeals(result.ok);
-      });
-  };
-
-  function createDeal() {
+  const handleCreateDeal = async (dealData: any) => {
+    console.log('Deal created:', dealData);
+    setIsLoading(true);
     const payload: CreateDealDTO = {
-      destination: 'Lisbon, Portugal',
-      features: [
-        { description: 'Presentations:', values: ['8.2 Kg carton'] },
-        { description: 'Sizes:', values: ['Sizes L - XL', 'Sizes L - J'] },
-        { description: 'Variety:', values: ['Red Globe'] },
-      ],
-      duration: '4 weeks',
-      origin: 'Callao, Peru',
-      risk: 'A',
-      productName: 'strawberries',
-      supplierMessage: 'consignee: xxxx',
-      finalCall: '03/11/2023',
-      prices: [
-        { description: 'Sizes L - J', price: '$2.30', unit: '/ Kg' },
-        { description: 'Sizes XL - J', price: '$2.44', unit: '/ Kg' },
-      ],
-      profit: '20%',
-      contractAmount: '$90000 USD',
-      price: '2.3',
-      productDescription: '',
-      contractId: '27102023-00010',
-      hsCode: '080610',
-      milestones: [
-        {
-          description: 'Production',
-          location: 'Callao, Peru',
-          date: '27/10/2023',
-          unlockedFundsPercentage: BigInt('0'),
-        },
-        {
-          description: 'Packing house',
-          location: 'Callao, Peru',
-          date: '28/10/2023',
-          unlockedFundsPercentage: BigInt('0'),
-        },
-        {
-          description: 'Finished product',
-          location: 'Callao, Peru',
-          date: '29/10/2023',
-          unlockedFundsPercentage: BigInt('0'),
-        },
-        {
-          description: 'Port of loading',
-          location: 'Callao, Peru',
-          date: '29/10/2023',
-          unlockedFundsPercentage: BigInt('0'),
-        },
-        {
-          description: 'Transit',
-          location: '',
-          date: '30/10/2023',
-          unlockedFundsPercentage: BigInt('0'),
-        },
-        {
-          description: 'Port of destination',
-          location: 'Lisbon, Portugal',
-          date: '15/11/2023',
-          unlockedFundsPercentage: BigInt('0'),
-        },
-        {
-          description: 'Arrival',
-          location: 'Lisbon, Portugal',
-          date: '17/11/2023',
-          unlockedFundsPercentage: BigInt('0'),
-        },
-      ],
+      destination: dealData.destination,
+      features: [],
+      duration: dealData.duration,
+      origin: dealData.origin,
+      risk: dealData.risk,
+      productName: dealData.name,
+      supplierMessage: dealData.supplierMessage,
+      finalCall: dealData.finalCall,
+      prices: [],
+      profit: dealData.profit,
+      contractAmount: dealData.contractAmount,
+      price: dealData.price,
+      productDescription: dealData.description,
+      contractId: dealData.contractId,
+      hsCode: dealData.hsCode,
+      milestones: [],
     };
 
-    icp_agro_deals_backend
+    await icp_agro_deals_backend
       .createDeal(payload)
       .then(() => {
         console.log('deal created');
@@ -101,8 +45,110 @@ function App() {
       .catch((err) => {
         console.error(err);
       });
-    return false;
-  }
+
+    await refreshDeals();
+    setIsLoading(false);
+    handleCloseModal();
+  };
+
+  const refreshDeals = async () => {
+    await icp_agro_deals_backend.list(BigInt(0)).then((result: any) => {
+      setDeals(result.ok);
+    });
+  };
+
+  const changeStatus = async (index: number, deal: Deal) => {
+    setIsLoading(true);
+    await icp_agro_deals_backend
+      .changeStatus(BigInt(index), BigInt(+deal.status.toString() + 1))
+      .then((result: any) => {
+        setDeals(result.ok);
+      });
+
+    await refreshDeals();
+    setIsLoading(false);
+  };
+
+  // function createDeal() {
+  //   const payload: CreateDealDTO = {
+  //     destination: 'Lisbon, Portugal',
+  //     features: [
+  //       { description: 'Presentations:', values: ['8.2 Kg carton'] },
+  //       { description: 'Sizes:', values: ['Sizes L - XL', 'Sizes L - J'] },
+  //       { description: 'Variety:', values: ['Red Globe'] },
+  //     ],
+  //     duration: '4 weeks',
+  //     origin: 'Callao, Peru',
+  //     risk: 'A',
+  //     productName: 'strawberries',
+  //     supplierMessage: 'consignee: xxxx',
+  //     finalCall: '03/11/2023',
+  //     prices: [
+  //       { description: 'Sizes L - J', price: '$2.30', unit: '/ Kg' },
+  //       { description: 'Sizes XL - J', price: '$2.44', unit: '/ Kg' },
+  //     ],
+  //     profit: '20%',
+  //     contractAmount: '$90000 USD',
+  //     price: '2.3',
+  //     productDescription: '',
+  //     contractId: '27102023-00010',
+  //     hsCode: '080610',
+  //     milestones: [
+  //       {
+  //         description: 'Production',
+  //         location: 'Callao, Peru',
+  //         date: '27/10/2023',
+  //         unlockedFundsPercentage: BigInt('0'),
+  //       },
+  //       {
+  //         description: 'Packing house',
+  //         location: 'Callao, Peru',
+  //         date: '28/10/2023',
+  //         unlockedFundsPercentage: BigInt('0'),
+  //       },
+  //       {
+  //         description: 'Finished product',
+  //         location: 'Callao, Peru',
+  //         date: '29/10/2023',
+  //         unlockedFundsPercentage: BigInt('0'),
+  //       },
+  //       {
+  //         description: 'Port of loading',
+  //         location: 'Callao, Peru',
+  //         date: '29/10/2023',
+  //         unlockedFundsPercentage: BigInt('0'),
+  //       },
+  //       {
+  //         description: 'Transit',
+  //         location: '',
+  //         date: '30/10/2023',
+  //         unlockedFundsPercentage: BigInt('0'),
+  //       },
+  //       {
+  //         description: 'Port of destination',
+  //         location: 'Lisbon, Portugal',
+  //         date: '15/11/2023',
+  //         unlockedFundsPercentage: BigInt('0'),
+  //       },
+  //       {
+  //         description: 'Arrival',
+  //         location: 'Lisbon, Portugal',
+  //         date: '17/11/2023',
+  //         unlockedFundsPercentage: BigInt('0'),
+  //       },
+  //     ],
+  //   };
+
+  //   icp_agro_deals_backend
+  //     .createDeal(payload)
+  //     .then(() => {
+  //       console.log('deal created');
+  //     })
+  //     .catch((err) => {
+  //       console.error(err);
+  //     });
+  //   return false;
+  // }
 
   useEffect(() => {
     refreshDeals();
@@ -110,22 +156,11 @@ function App() {
 
   return (
     <main>
+      {isLoading && <Spinner /> }
+      
       <div className="flex flex-col md:flex-row justify-center items-center pt-10 space-y-2 md:space-y-0 md:space-x-6">
-        <button
-          onClick={createDeal}
-          className={
-            'bg-indigo-400 hover:bg-indigo-700 text-white text-[18px] font-bold py-3 px-20 rounded-md min-w-[250px] max-w-[300px]'
-          }
-        >
+        <button onClick={handleOpenModal} className={"bg-indigo-400 hover:bg-indigo-700 text-white text-[18px] font-bold py-3 px-20 rounded-md min-w-[250px] max-w-[300px]"}>
           Create Deal
-        </button>
-        <button
-          onClick={refreshDeals}
-          className={
-            'bg-indigo-400 hover:bg-indigo-700 text-white text-[18px] font-bold py-3 px-20 rounded-md min-w-[250px] max-w-[300px]'
-          }
-        >
-          Refresh List
         </button>
       </div>
 
@@ -137,7 +172,7 @@ function App() {
                 key={index}
                 code={deal.id.toString()}
                 title={deal.productName}
-                price="2.3"
+                price={deal.price}
                 description={deal.productDescription}
                 milestones={deal.milestones}
                 currentMilestone={deal.status.toString()}
@@ -146,6 +181,7 @@ function App() {
             ))}
         </div>
       </div>
+      <CreateDealModal isOpen={isModalOpen} onClose={handleCloseModal} onCreateDeal={handleCreateDeal} />
     </main>
   );
 }

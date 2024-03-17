@@ -18,21 +18,21 @@ const DealPage = () => {
       });
   }, []);
 
-  const hsCode = '080610';
+  const hsCode = deal?.hsCode || '';
   const productName = deal?.productName || '';
   const productDescription = deal?.productDescription || '';
-  const price = '2.3';
+  const price = deal?.price || '';
   const progressPercentage = 100;
-  const finalCall = '03/11/2023';
-  const contractAmount = '$90000 USD';
-  const contractId = '27102023-00010';
-  const fundedAmount = '$90000 USD';
-  const duration = '4 weeks';
-  const profit = '20%';
-  const risk = 'A';
-  const supplierMessage = 'consignee: xxxx';
-  const origin = 'Callao, Peru';
-  const destination = 'Lisbon, Portugal';
+  const finalCall = deal?.finalCall || '';
+  const contractAmount = deal?.contractAmount || '';
+  const contractId = deal?.contractId || '';
+  const fundedAmount = deal?.contractAmount || '';
+  const duration = deal?.duration || '';
+  const profit = deal?.profit || '';
+  const risk = deal?.risk || '';
+  const supplierMessage = deal?.supplierMessage || '';
+  const origin = deal?.origin || '';
+  const destination = deal?.destination || '';
 
   const milestones = [
     {
