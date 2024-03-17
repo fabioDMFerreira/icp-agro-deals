@@ -7,6 +7,8 @@ import Error "mo:base/Error";
 import Principal "mo:base/Principal";
 import List "mo:base/List";
 import Time "mo:base/Time";
+import Array "mo:base/Array";
+import Option "mo:base/Option";
 import Vector "mo:vector/Class";
 
 shared (installer) actor class DealsManager() {
@@ -83,20 +85,69 @@ shared (installer) actor class DealsManager() {
 
   private let listLimit = 10;
 
-  private stable var owner : Principal = installer.caller;
+  private stable var owner : ?Principal = null;
+  private stable var admins : [Principal] = [];
 
   private stable var next : DealId = 0;
   private stable var deals : Trie.Trie<DealId, Deal> = Trie.empty();
   private stable var logs : Trie.Trie<DealId, List.List<LogEntry>> = Trie.empty();
 
-  public func setOwner(newOwner : Principal) : async () {
-    isOwner();
+  // Authorization
 
-    owner := newOwner;
+  public shared ({ caller }) func setOwner(newOwner : Principal) : async Result.Result<(), Text> {
+    if (owner != null and (await isOwner(caller)) == false) {
+      return #err(unauthorizedErr);
+    };
+    owner := ?newOwner;
+
+    #ok();
   };
 
-  public func createDeal(payload : CreateDealDTO) : async Result.Result<(), Text> {
-    isOwner();
+  public shared ({ caller }) func addAdmin(admin : Principal) : async Result.Result<(), Text> {
+    if (?caller != owner) {
+      return #err(unauthorizedErr);
+    };
+
+    admins := Array.append<Principal>(admins, [admin]);
+
+    return #ok();
+  };
+
+  public func isOwner(caller : Principal) : async Bool {
+    if (?caller != owner) {
+      return false;
+    };
+
+    return true;
+  };
+
+  public func isAdmin(caller : Principal) : async Bool {
+    let admin = Array.find<Principal>(admins, func x = x == caller);
+    if (Option.isSome(admin)) {
+      return true;
+    };
+
+    return false;
+  };
+
+  public func isAuthorized(caller : Principal) : async Bool {
+    return (await isAdmin(caller)) or (await isOwner(caller));
+  };
+
+  public shared (msg) func whoami() : async Principal {
+    msg.caller;
+  };
+
+  public func getOwner() : async ?Principal {
+    owner;
+  };
+
+  // Deals
+
+  public shared ({ caller }) func createDeal(payload : CreateDealDTO) : async Result.Result<(), Text> {
+    if ((await isAuthorized(caller)) == false) {
+      return #err(unauthorizedErr);
+    };
 
     let dealId = next;
     next += 1;
@@ -128,8 +179,10 @@ shared (installer) actor class DealsManager() {
     #ok(());
   };
 
-  public func changeStatus(dealId : Nat, newStatus : Nat) : async Result.Result<(), Text> {
-    isOwner();
+  public shared ({ caller }) func changeStatus(dealId : Nat, newStatus : Nat) : async Result.Result<(), Text> {
+    if ((await isAuthorized(caller)) == false) {
+      return #err(unauthorizedErr);
+    };
 
     if (dealId >= next) {
       return #err(indexOutOfBoundsErr);
@@ -204,12 +257,6 @@ shared (installer) actor class DealsManager() {
       };
     };
     return #ok(Vector.toArray(result));
-  };
-
-  public shared ({ caller }) func isOwner() {
-    if (caller != owner) {
-      throw Error.reject(unauthorizedErr);
-    };
   };
 
   public query func listLogs(dealId : Nat) : async Result.Result<[LogEntry], Text> {
