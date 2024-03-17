@@ -1,19 +1,37 @@
 import { useEffect, useState } from 'react';
-import { icp_agro_deals_backend } from 'declarations/icp_agro_deals_backend';
+import {
+  icp_agro_deals_backend,
+  canisterId,
+  createActor,
+} from 'declarations/icp_agro_deals_backend';
+import { canisterId as iiCanisterID } from 'declarations/internet_identity';
 import {
   CreateDealDTO,
   Deal,
+  _SERVICE,
 } from 'declarations/icp_agro_deals_backend/icp_agro_deals_backend.did';
 import DealPreview from './components/DealPreview';
 import CreateDealModal from './components/CreateDealModal';
 import Spinner from './components/Spinner';
 
+import { AuthClient } from '@dfinity/auth-client';
+import { HttpAgent } from '@dfinity/agent';
+
 function App() {
   const [deals, setDeals] = useState<Deal[]>([]);
+  const [actor, setActor] = useState(icp_agro_deals_backend);
+  const [user, setUser] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
+
+  const refreshDeals = () => {
+    actor.list(BigInt(0)).then((result: any) => {
+      console.log(result);
+      setDeals(result.ok);
+    });
+  };
 
   const handleCreateDeal = async (dealData: any) => {
     console.log('Deal created:', dealData);
@@ -37,13 +55,18 @@ function App() {
       milestones: [],
     };
 
-    await icp_agro_deals_backend
+    actor
       .createDeal(payload)
-      .then(() => {
-        console.log('deal created');
+      .then((result: any) => {
+        if (result.err) {
+          throw new Error(
+            result.err + '. Set your principal as canister owner or admin.'
+          );
+        }
+        console.log('created deal', { result });
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((err: Error) => {
+        alert(err);
       });
 
     await refreshDeals();
@@ -51,15 +74,9 @@ function App() {
     handleCloseModal();
   };
 
-  const refreshDeals = async () => {
-    await icp_agro_deals_backend.list(BigInt(0)).then((result: any) => {
-      setDeals(result.ok);
-    });
-  };
-
   const changeStatus = async (index: number, deal: Deal) => {
     setIsLoading(true);
-    await icp_agro_deals_backend
+    await actor
       .changeStatus(BigInt(index), BigInt(+deal.status.toString() + 1))
       .then((result: any) => {
         setDeals(result.ok);
@@ -150,16 +167,53 @@ function App() {
   //   return false;
   // }
 
+  async function handleAuthenticated(authClient: AuthClient) {
+    const identity = await authClient.getIdentity();
+    const agent = new HttpAgent({ identity });
+    const actor = createActor(canisterId, { agent });
+
+    setActor(actor);
+    setUser(identity.getPrincipal().toString());
+  }
+
   useEffect(() => {
     refreshDeals();
   }, []);
 
+  async function login() {
+    const authClient = await AuthClient.create();
+
+    await new Promise((resolve) => {
+      authClient.login({
+        identityProvider: `http://${iiCanisterID}.localhost:4943/`,
+        onSuccess: () => {
+          resolve(1);
+        },
+      });
+    });
+
+    await handleAuthenticated(authClient);
+  }
+
   return (
     <main>
-      {isLoading && <Spinner /> }
-      
+      {isLoading && <Spinner />}
+      <div>
+        {user ? (
+          <p>{user}</p>
+        ) : (
+          <button className="btn" onClick={login}>
+            Login
+          </button>
+        )}
+      </div>
       <div className="flex flex-col md:flex-row justify-center items-center pt-10 space-y-2 md:space-y-0 md:space-x-6">
-        <button onClick={handleOpenModal} className={"bg-indigo-400 hover:bg-indigo-700 text-white text-[18px] font-bold py-3 px-20 rounded-md min-w-[250px] max-w-[300px]"}>
+        <button
+          onClick={handleOpenModal}
+          className={
+            'bg-indigo-400 hover:bg-indigo-700 text-white text-[18px] font-bold py-3 px-20 rounded-md min-w-[250px] max-w-[300px]'
+          }
+        >
           Create Deal
         </button>
       </div>
@@ -181,7 +235,11 @@ function App() {
             ))}
         </div>
       </div>
-      <CreateDealModal isOpen={isModalOpen} onClose={handleCloseModal} onCreateDeal={handleCreateDeal} />
+      <CreateDealModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onCreateDeal={handleCreateDeal}
+      />
     </main>
   );
 }
