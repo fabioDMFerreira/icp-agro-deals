@@ -26,7 +26,7 @@ const InputMilestone = ({index, setter}: InputMilestoneProperties) => {
 
   return (
     <div className="flex flex-col lg:flex-row space-x-2 lg:items-center items-start pt-2">
-      <p>{index}.</p>
+      <p>{Number(index)+1}.</p>
       <input 
         type="text"
         id="description"

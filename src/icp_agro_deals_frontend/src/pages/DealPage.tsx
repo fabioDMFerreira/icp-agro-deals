@@ -19,45 +19,7 @@ const DealPage = () => {
   }, []);
 
 
-
-  const progressPercentage = 100;
-
-  const milestones = [
-    {
-      label: 'Production',
-      location: 'Callao, Peru',
-      date: '27/10/2023',
-    },
-    {
-      label: 'Packing house',
-      location: 'Callao, Peru',
-      date: '28/10/2023',
-    },
-    {
-      label: 'Finished product',
-      location: 'Callao, Peru',
-      date: '29/10/2023',
-    },
-    {
-      label: 'Port of loading',
-      location: 'Callao, Peru',
-      date: '29/10/2023',
-    },
-    {
-      label: 'Transit',
-      date: '30/10/2023',
-    },
-    {
-      label: 'Port of destination',
-      location: 'Lisbon, Portugal',
-      date: '15/11/2023',
-    },
-    {
-      label: 'Arrival',
-      location: 'Lisbon, Portugal',
-      date: '17/11/2023',
-    },
-  ];
+  const progressPercentage = Math.floor(Number(deal?.status)/7 * 100);
 
   const dealFeatures = [
     { label: 'Presentations:', values: ['8.2 Kg carton'] },
@@ -98,7 +60,8 @@ const DealPage = () => {
               productName={deal?.productName || ''}
               origin={origin}
               destination={deal?.destination || ''}
-              milestones={milestones}
+              currentMilestone={Number(deal?.status) || 0}
+              milestones={deal?.milestones || []}
             />
           </>
         )}

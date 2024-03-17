@@ -32,7 +32,7 @@ const DealFunding = ({ dealId }: Props) => {
           console.log(date);
 
           return (
-            <p>
+            <p className="text-[18px]">
               {date.toISOString()}: {logEntry.message}
             </p>
           );

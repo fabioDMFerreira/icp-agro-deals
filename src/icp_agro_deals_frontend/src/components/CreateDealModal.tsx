@@ -48,9 +48,22 @@ const CreateDealModal: React.FC<CreateDealModalProps> = ({ isOpen, onClose, onCr
       milestones
     };
     onCreateDeal(dealData);
+    
     // Reset the form
+    setName('');
     setDescription(''); 
     setPrice('');
+    setHsCode('');
+    setOrigin('');
+    setDestination('');
+    setDuration('');
+    setRisk('');
+    setSupplierMessage('');
+    setFinalCall('');
+    setProfit('');
+    setContractAmount('');
+    setContractId('');
+    setMilestones([{}, {}, {}, {}, {}, {}, {}]); 
   };
 
   return (

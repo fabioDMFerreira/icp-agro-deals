@@ -55,10 +55,10 @@ function App() {
       productDescription: dealData.description,
       contractId: dealData.contractId,
       hsCode: dealData.hsCode,
-      milestones: [],
+      milestones: dealData.milestones,
     };
 
-    actor
+    await actor
       .createDeal(payload)
       .then((result: any) => {
         if (result.err) {
@@ -182,7 +182,7 @@ function App() {
   useEffect(() => {
     refreshDeals();
   }, []);
-  
+
 
   async function login() {
     const authClient = await AuthClient.create();
