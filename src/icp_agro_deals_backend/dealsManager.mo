@@ -17,18 +17,63 @@ shared (installer) actor class DealsManager() {
 
   type Milestone = {
     description : Text;
-    number : Nat;
+    location : Text;
+    date : Text;
+    unlockedFundsPercentage : Nat;
+  };
+
+  type Feature = {
+    description : Text;
+    values : [Text];
+  };
+
+  type Price = {
+    description : Text;
+    price : Text;
+    unit : Text;
   };
 
   public type DealId = Nat;
 
   public type Deal = {
     id : Nat;
-    name : Text;
-    description : Text;
-    milestones : [Milestone];
-    funds : Nat;
     status : Nat;
+    hsCode : Text;
+    productName : Text;
+    productDescription : Text;
+    price : Text;
+    finalCall : Text;
+    contractAmount : Text;
+    contractId : Text;
+    // fundedAmount : Text;
+    duration : Text;
+    profit : Text;
+    risk : Text;
+    supplierMessage : Text;
+    origin : Text;
+    destination : Text;
+    milestones : [Milestone];
+    features : [Feature];
+    prices : [Price];
+  };
+
+  private type CreateDealDTO = {
+    hsCode : Text;
+    productName : Text;
+    productDescription : Text;
+    price : Text;
+    finalCall : Text;
+    contractAmount : Text;
+    contractId : Text;
+    duration : Text;
+    profit : Text;
+    risk : Text;
+    supplierMessage : Text;
+    origin : Text;
+    destination : Text;
+    milestones : [Milestone];
+    features : [Feature];
+    prices : [Price];
   };
 
   type LogEntry = {
@@ -50,7 +95,7 @@ shared (installer) actor class DealsManager() {
     owner := newOwner;
   };
 
-  public func createDeal(name : Text, description : Text, milestones : [Milestone], funds : Nat) : async Result.Result<(), Text> {
+  public func createDeal(payload : CreateDealDTO) : async Result.Result<(), Text> {
     isOwner();
 
     let dealId = next;
@@ -58,11 +103,23 @@ shared (installer) actor class DealsManager() {
 
     let deal : Deal = {
       id = dealId;
-      name;
-      description;
-      milestones;
-      funds;
       status = 0;
+      hsCode = payload.hsCode;
+      productName = payload.productName;
+      productDescription = payload.productDescription;
+      price = payload.price;
+      finalCall = payload.finalCall;
+      contractAmount = payload.contractAmount;
+      contractId = payload.contractId;
+      duration = payload.duration;
+      profit = payload.profit;
+      risk = payload.risk;
+      supplierMessage = payload.supplierMessage;
+      origin = payload.origin;
+      destination = payload.destination;
+      milestones = payload.milestones;
+      features = payload.features;
+      prices = payload.prices;
     };
 
     upsertDeal(dealId, deal);
@@ -86,12 +143,24 @@ shared (installer) actor class DealsManager() {
         };
 
         let update = {
-          id = dealId;
-          name = deal.name;
-          description = deal.description;
-          milestones = deal.milestones;
-          funds = deal.funds;
+          id = deal.id;
           status = newStatus;
+          hsCode = deal.hsCode;
+          productName = deal.productName;
+          productDescription = deal.productDescription;
+          price = deal.price;
+          finalCall = deal.finalCall;
+          contractAmount = deal.contractAmount;
+          contractId = deal.contractId;
+          duration = deal.duration;
+          profit = deal.profit;
+          risk = deal.risk;
+          supplierMessage = deal.supplierMessage;
+          origin = deal.origin;
+          destination = deal.destination;
+          milestones = deal.milestones;
+          features = deal.features;
+          prices = deal.prices;
         };
 
         upsertDeal(dealId, update);
