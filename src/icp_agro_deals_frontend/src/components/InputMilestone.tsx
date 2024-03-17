@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type InputMilestoneProperties = {
   index: string;
@@ -20,9 +20,18 @@ const InputMilestone = ({index, setter}: InputMilestoneProperties) => {
       ...prevState,
       [id]: value
     }));
-
-    setter((arr: any) => {arr[index] = milestone; return arr;});
   };
+
+  // Use useEffect to call the setter function with a debounce effect.
+  useEffect(() => {
+    // Create a timeout to debounce the setter call
+    const timeoutId = setTimeout(() => {
+      setter((arr: any) => {arr[index] = milestone; return arr;})
+    }, 500); // Adjust debounce time as needed
+
+    // Cleanup function to clear the timeout if the effect is re-run before the timeout is reached
+    return () => clearTimeout(timeoutId);
+  }, [milestone, setter]); 
 
   return (
     <div className="flex flex-col lg:flex-row space-x-2 lg:items-center items-start pt-2">
