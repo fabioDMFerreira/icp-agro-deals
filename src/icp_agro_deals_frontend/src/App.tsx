@@ -17,6 +17,9 @@ import Spinner from './components/Spinner';
 import { AuthClient } from '@dfinity/auth-client';
 import { HttpAgent } from '@dfinity/agent';
 
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import PersonIcon from '@mui/icons-material/Person';
+
 function App() {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [actor, setActor] = useState(icp_agro_deals_backend);
@@ -26,7 +29,7 @@ function App() {
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
-  const refreshDeals = () => {
+  const refreshDeals = async () => {
     actor.list(BigInt(0)).then((result: any) => {
       console.log(result);
       setDeals(result.ok);
@@ -52,10 +55,10 @@ function App() {
       productDescription: dealData.description,
       contractId: dealData.contractId,
       hsCode: dealData.hsCode,
-      milestones: [],
+      milestones: dealData.milestones,
     };
 
-    actor
+    await actor
       .createDeal(payload)
       .then((result: any) => {
         if (result.err) {
@@ -180,6 +183,7 @@ function App() {
     refreshDeals();
   }, []);
 
+
   async function login() {
     const authClient = await AuthClient.create();
 
@@ -199,15 +203,22 @@ function App() {
     <main>
       {isLoading && <Spinner />}
       <div>
-        {user ? (
-          <p>{user}</p>
-        ) : (
-          <button className="btn" onClick={login}>
-            Login
-          </button>
-        )}
+        
       </div>
-      <div className="flex flex-col md:flex-row justify-center items-center pt-10 space-y-2 md:space-y-0 md:space-x-6">
+      <div className="flex flex-col justify-center items-center pt-10 space-y-2 md:space-x-6">
+        {user ? (
+            <div className="flex space-x-1 items-center">
+              <PersonIcon className="text-slate-800" style={{ fontSize: 20 }} />
+              <p>{user}</p>
+            </div>
+          ) : (
+            <button className={
+              'flex items-center justify-center space-x-1 bg-slate-400 hover:bg-slate-700 text-white text-[18px] font-bold py-3 rounded-md min-w-[100px] max-w-[150px]'
+            } onClick={login}>
+              <p>Login</p>
+              <ExitToAppIcon className="text-slate-100 cursor-pointer" style={{ fontSize: 20 }} />
+            </button>
+          )}
         <button
           onClick={handleOpenModal}
           className={
@@ -216,6 +227,8 @@ function App() {
         >
           Create Deal
         </button>
+
+        
       </div>
 
       <div className="container mx-auto px-4 m-10 p-5">

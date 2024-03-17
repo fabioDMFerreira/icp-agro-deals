@@ -22,8 +22,8 @@ const DealFunding = ({ dealId }: Props) => {
   }, [dealId]);
 
   return (
-    <div className="lg:min-w-[800px] rounded-md shadow-lg p-4 bg-zinc-100 border">
-      <h2>Timeline</h2>
+    <div className="lg:min-w-[800px] rounded-md shadow-lg p-4 bg-zinc-50 border">
+      <p className="text-[25px] font-bold mb-3">Timeline</p>
       {logs.length &&
         logs.map((logEntry) => {
           const dateTimestamp = +logEntry.timestamp.toString();
@@ -32,7 +32,7 @@ const DealFunding = ({ dealId }: Props) => {
           console.log(date);
 
           return (
-            <p>
+            <p className="text-[18px]">
               {date.toISOString()}: {logEntry.message}
             </p>
           );

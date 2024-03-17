@@ -1,12 +1,12 @@
+import { Milestone } from "../../../declarations/icp_agro_deals_backend/icp_agro_deals_backend.did";
+import DealLogs from "./DealLogs";
+import MilestoneIcon from "./MilestoneIcon";
 import ProgressBar from "./ProgressBar";
-
-type DealFundingMilestone= {
-  label: string;
-  location?: string;
-  date: string;
-}
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import TripOriginIcon from '@mui/icons-material/TripOrigin';
 
 type DealFundingProperties = {
+  dealId: string;
   progressPercentage: number;
   finalCall: string;
   contractAmount: string;
@@ -19,10 +19,11 @@ type DealFundingProperties = {
   productName: string;
   origin: string;
   destination: string;
-  milestones: DealFundingMilestone[];
+  currentMilestone: number;
+  milestones: Milestone[];
 }
 
-const DealFunding = ({progressPercentage, finalCall, contractAmount, contractId, fundedAmount, duration, profit, risk, supplierMessage, productName, origin, destination, milestones}: DealFundingProperties) => {
+const DealFunding = ({dealId, progressPercentage, finalCall, contractAmount, contractId, fundedAmount, duration, profit, risk, supplierMessage, productName, origin, destination, currentMilestone, milestones}: DealFundingProperties) => {
   return (
     <div className="lg:min-w-[800px] rounded-md shadow-lg p-4 bg-zinc-100 border">
       <p className="text-[25px] font-bold mt-12">Currently funded: <span className="px-5 text-lime-600 text-[20px]">{progressPercentage}% completed</span></p>
@@ -38,8 +39,16 @@ const DealFunding = ({progressPercentage, finalCall, contractAmount, contractId,
         <p className="text-[20px]">Risk: {risk}</p>
       </div>
       <p className="text-[25px] mt-10">Message from supplier:</p>
-      <p className="text-[20px] mt-2">{supplierMessage}</p>
+      <p className="text-[20px] mt-0.5 mb-8">{supplierMessage}</p>
 
+      <div className="flex space-x-2">
+      {milestones.map((milestone, index) => {
+        return (
+          <MilestoneIcon description={milestone.description} location={milestone.location} date={milestone.date} isDone={currentMilestone > index}/>
+        )})}
+      </div>
+
+      <DealLogs dealId={dealId} />
     </div>
 
   )

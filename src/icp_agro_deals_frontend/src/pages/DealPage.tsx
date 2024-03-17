@@ -1,6 +1,5 @@
 import DealCard from '../components/DealCard';
 import DealFunding from '../components/DealFunding';
-import DealLogs from '../components/DealLogs';
 import { useParams } from 'react-router-dom';
 import { icp_agro_deals_backend } from 'declarations/icp_agro_deals_backend';
 import { Deal } from 'declarations/icp_agro_deals_backend/icp_agro_deals_backend.did';
@@ -19,58 +18,8 @@ const DealPage = () => {
       });
   }, []);
 
-  const hsCode = deal?.hsCode || '';
-  const productName = deal?.productName || '';
-  const productDescription = deal?.productDescription || '';
-  const price = deal?.price || '';
-  const progressPercentage = 100;
-  const finalCall = deal?.finalCall || '';
-  const contractAmount = deal?.contractAmount || '';
-  const contractId = deal?.contractId || '';
-  const fundedAmount = deal?.contractAmount || '';
-  const duration = deal?.duration || '';
-  const profit = deal?.profit || '';
-  const risk = deal?.risk || '';
-  const supplierMessage = deal?.supplierMessage || '';
-  const origin = deal?.origin || '';
-  const destination = deal?.destination || '';
 
-  const milestones = [
-    {
-      label: 'Production',
-      location: 'Callao, Peru',
-      date: '27/10/2023',
-    },
-    {
-      label: 'Packing house',
-      location: 'Callao, Peru',
-      date: '28/10/2023',
-    },
-    {
-      label: 'Finished product',
-      location: 'Callao, Peru',
-      date: '29/10/2023',
-    },
-    {
-      label: 'Port of loading',
-      location: 'Callao, Peru',
-      date: '29/10/2023',
-    },
-    {
-      label: 'Transit',
-      date: '30/10/2023',
-    },
-    {
-      label: 'Port of destination',
-      location: 'Lisbon, Portugal',
-      date: '15/11/2023',
-    },
-    {
-      label: 'Arrival',
-      location: 'Lisbon, Portugal',
-      date: '17/11/2023',
-    },
-  ];
+  const progressPercentage = Math.floor(Number(deal?.status)/7 * 100);
 
   const dealFeatures = [
     { label: 'Presentations:', values: ['8.2 Kg carton'] },
@@ -88,34 +37,32 @@ const DealPage = () => {
       <div className="relative z-20 flex flex-1 space-x-10 pt-6">
         {!isLoading && (
           <>
-            <>
-              <DealCard
-                code={hsCode}
-                title={productName}
-                price={price}
-                description={productDescription}
-                features={dealFeatures}
-                prices={dealPrices}
-              />
-              <DealFunding
-                progressPercentage={progressPercentage}
-                finalCall={finalCall}
-                contractAmount={contractAmount}
-                contractId={contractId}
-                fundedAmount={fundedAmount}
-                duration={duration}
-                profit={profit}
-                risk={risk}
-                supplierMessage={supplierMessage}
-                productName={productName}
-                origin={origin}
-                destination={destination}
-                milestones={milestones}
-              />
-            </>
-            <>
-              <DealLogs dealId={dealId} />
-            </>
+            <DealCard
+              code={deal?.hsCode || ''}
+              origin={deal?.origin || ''}
+              title={deal?.productName || ''}
+              price={deal?.price || ''}
+              description={deal?.productDescription || ''}
+              features={dealFeatures}
+              prices={dealPrices}
+            />
+            <DealFunding
+              dealId={dealId || ''}
+              progressPercentage={progressPercentage}
+              finalCall={deal?.finalCall || ''}
+              contractAmount={deal?.contractAmount || ''}
+              contractId={deal?.contractId || ''}
+              fundedAmount={deal?.contractAmount || ''}
+              duration={deal?.duration || ''}
+              profit={deal?.profit || ''}
+              risk={deal?.risk || ''}
+              supplierMessage={deal?.supplierMessage || ''}
+              productName={deal?.productName || ''}
+              origin={origin}
+              destination={deal?.destination || ''}
+              currentMilestone={Number(deal?.status) || 0}
+              milestones={deal?.milestones || []}
+            />
           </>
         )}
       </div>
