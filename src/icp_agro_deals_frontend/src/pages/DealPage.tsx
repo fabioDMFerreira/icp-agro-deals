@@ -1,5 +1,6 @@
 import DealCard from '../components/DealCard';
 import DealFunding from '../components/DealFunding';
+import DealLogs from '../components/DealLogs';
 import { useParams } from 'react-router-dom';
 import { icp_agro_deals_backend } from 'declarations/icp_agro_deals_backend';
 import { Deal } from 'declarations/icp_agro_deals_backend/icp_agro_deals_backend.did';
@@ -87,29 +88,34 @@ const DealPage = () => {
       <div className="relative z-20 flex flex-1 space-x-10 pt-6">
         {!isLoading && (
           <>
-            <DealCard
-              code={hsCode}
-              title={productName}
-              price={price}
-              description={productDescription}
-              features={dealFeatures}
-              prices={dealPrices}
-            />
-            <DealFunding
-              progressPercentage={progressPercentage}
-              finalCall={finalCall}
-              contractAmount={contractAmount}
-              contractId={contractId}
-              fundedAmount={fundedAmount}
-              duration={duration}
-              profit={profit}
-              risk={risk}
-              supplierMessage={supplierMessage}
-              productName={productName}
-              origin={origin}
-              destination={destination}
-              milestones={milestones}
-            />
+            <>
+              <DealCard
+                code={hsCode}
+                title={productName}
+                price={price}
+                description={productDescription}
+                features={dealFeatures}
+                prices={dealPrices}
+              />
+              <DealFunding
+                progressPercentage={progressPercentage}
+                finalCall={finalCall}
+                contractAmount={contractAmount}
+                contractId={contractId}
+                fundedAmount={fundedAmount}
+                duration={duration}
+                profit={profit}
+                risk={risk}
+                supplierMessage={supplierMessage}
+                productName={productName}
+                origin={origin}
+                destination={destination}
+                milestones={milestones}
+              />
+            </>
+            <>
+              <DealLogs dealId={dealId} />
+            </>
           </>
         )}
       </div>
