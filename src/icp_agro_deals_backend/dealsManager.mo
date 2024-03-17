@@ -259,19 +259,6 @@ shared (installer) actor class DealsManager() {
     return #ok(Vector.toArray(result));
   };
 
-  public query func listLogs(dealId : Nat) : async Result.Result<[LogEntry], Text> {
-    let logs = getLogs(dealId);
-
-    switch (logs) {
-      case null {
-        return #err(notFoundErr);
-      };
-      case (?logs) {
-        return #ok(List.toArray(logs));
-      };
-    };
-  };
-
   private func upsertDeal(dealId : Nat, deal : Deal) : () {
     deals := Trie.replace(
       deals,
@@ -287,6 +274,21 @@ shared (installer) actor class DealsManager() {
 
   private func dealKey(x : DealId) : Trie.Key<DealId> {
     return { hash = Nat32.fromNat(x); key = x };
+  };
+
+  // Logs
+
+  public query func listLogs(dealId : Nat) : async Result.Result<[LogEntry], Text> {
+    let logs = getLogs(dealId);
+
+    switch (logs) {
+      case null {
+        return #err(notFoundErr);
+      };
+      case (?logs) {
+        return #ok(List.toArray(logs));
+      };
+    };
   };
 
   private func log(dealId : Nat, message : Text) {
