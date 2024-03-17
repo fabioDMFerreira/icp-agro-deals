@@ -15,7 +15,7 @@ const InputField = ({id, label, type, setter}: InputFieldProperties) => {
           id={id} 
           onChange={(e) => setter(e.target.value)}
           className="p-0.5 w-full border border-gray-300 rounded-md shadow-sm"
-          placeholder={`Enter ${id}`}
+          placeholder={`${id}`}
           step="0.1"
       />
     </div>

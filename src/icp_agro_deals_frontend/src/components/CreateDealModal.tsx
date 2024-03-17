@@ -2,6 +2,7 @@ import React, {useState } from 'react';
 
 import CloseIcon from '@mui/icons-material/Close';
 import InputField from './InputField';
+import InputMilestone from './InputMilestone';
 
 interface CreateDealModalProps {
   isOpen: boolean;
@@ -25,6 +26,8 @@ const CreateDealModal: React.FC<CreateDealModalProps> = ({ isOpen, onClose, onCr
   const [profit, setProfit] = useState('');
   const [contractAmount, setContractAmount] = useState('');
   const [contractId, setContractId] = useState('');
+  const [milestones, setMilestones] = useState([{}, {}, {}, {}, {}, {}, {}]);
+
   
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -41,7 +44,8 @@ const CreateDealModal: React.FC<CreateDealModalProps> = ({ isOpen, onClose, onCr
       finalCall,
       profit,
       contractAmount,
-      contractId
+      contractId,
+      milestones
     };
     onCreateDeal(dealData);
     // Reset the form
@@ -72,8 +76,12 @@ const CreateDealModal: React.FC<CreateDealModalProps> = ({ isOpen, onClose, onCr
             <InputField id="contractAmount" label="Contract Amount" type="text" setter={setContractAmount} />
             <InputField id="contractId" label="Contract Id" type="text" setter={setContractId} />
 
-            
-            <div className="flex lg:space-x-4 lg:space-y-0 space-y-4 justify-center items-center flex-col lg:flex-row xl:flex-row 2xl:flex-row">
+            <h2 className="text-xl font-bold py-3">Milestones</h2>
+            {milestones.map((val, index) => (
+              <InputMilestone key={index} index={index.toString()} setter={setMilestones} />
+            ))}
+
+            <div className="flex pt-10 lg:space-x-4 lg:space-y-0 space-y-4 justify-center items-center flex-col lg:flex-row xl:flex-row 2xl:flex-row">
               <button type="submit" className={"bg-indigo-400 hover:bg-indigo-700 text-white text-[18px] font-bold py-3 rounded-md min-w-[250px] max-w-[300px]"}>
                 Create Deal
               </button>
