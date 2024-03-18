@@ -77,13 +77,13 @@ function App() {
     handleCloseModal();
   };
 
-  const changeStatus = async (index: number, deal: Deal) => {
+  const changeStatus = async (deal: Deal) => {
     setIsLoading(true);
-    await actor
-      .changeStatus(BigInt(index), BigInt(+deal.status.toString() + 1))
-      .then((result: any) => {
-        setDeals(result.ok);
-      });
+    console.log(deal.id, +deal.status.toString() + 1);
+    await actor.changeStatus(
+      BigInt(deal.id),
+      BigInt(+deal.status.toString() + 1)
+    );
 
     await refreshDeals();
     setIsLoading(false);
@@ -183,7 +183,6 @@ function App() {
     refreshDeals();
   }, []);
 
-
   async function login() {
     const authClient = await AuthClient.create();
 
@@ -202,23 +201,27 @@ function App() {
   return (
     <main>
       {isLoading && <Spinner />}
-      <div>
-        
-      </div>
+      <div></div>
       <div className="flex flex-col justify-center items-center pt-10 space-y-2 md:space-x-6">
         {user ? (
-            <div className="flex space-x-1 items-center">
-              <PersonIcon className="text-slate-800" style={{ fontSize: 20 }} />
-              <p>{user}</p>
-            </div>
-          ) : (
-            <button className={
+          <div className="flex space-x-1 items-center">
+            <PersonIcon className="text-slate-800" style={{ fontSize: 20 }} />
+            <p>{user}</p>
+          </div>
+        ) : (
+          <button
+            className={
               'flex items-center justify-center space-x-1 bg-slate-400 hover:bg-slate-700 text-white text-[18px] font-bold py-3 rounded-md min-w-[100px] max-w-[150px]'
-            } onClick={login}>
-              <p>Login</p>
-              <ExitToAppIcon className="text-slate-100 cursor-pointer" style={{ fontSize: 20 }} />
-            </button>
-          )}
+            }
+            onClick={login}
+          >
+            <p>Login</p>
+            <ExitToAppIcon
+              className="text-slate-100 cursor-pointer"
+              style={{ fontSize: 20 }}
+            />
+          </button>
+        )}
         <button
           onClick={handleOpenModal}
           className={
@@ -227,8 +230,6 @@ function App() {
         >
           Create Deal
         </button>
-
-        
       </div>
 
       <div className="container mx-auto px-4 m-10 p-5">
@@ -243,7 +244,7 @@ function App() {
                 description={deal.productDescription}
                 milestones={deal.milestones}
                 currentMilestone={deal.status.toString()}
-                nextMilestone={() => changeStatus(index, deal)}
+                nextMilestone={() => changeStatus(deal)}
               />
             ))}
         </div>
